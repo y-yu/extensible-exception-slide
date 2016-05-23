@@ -1,0 +1,104 @@
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=links}
+
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+\usefonttheme{serif}
+\beamertemplatenavigationsymbolsempty
+
+\usepackage{luacode}
+\usepackage{luatexja}
+\usepackage{pgfpages}
+\usepackage[osf]{mathpazo}
+
+\begin{luacode*}
+  USE_IPAFONT = os.getenv"USE_IPAFONT"
+  USE_YUFONT = os.getenv"USE_YUFONT"
+  
+  if USE_YUFONT == "true" then
+    tex.sprint("\\AtBeginDocument{\\usepackage[yu-osx, deluxe, expert]{luatexja-preset}}")
+    tex.sprint("\\AtBeginDocument{\\setmainjfont[BoldFont=YuGothic Bold]{YuGothic Medium}}")
+  elseif USE_IPAFONT == "true" then
+    tex.sprint("\\AtBeginDocument{\\usepackage[ipaex, deluxe, expert]{luatexja-preset}}")
+  else
+    tex.sprint("\\AtBeginDocument{\\usepackage[hiragino-pro, deluxe, expert]{luatexja-preset}}")
+    tex.sprint("\\AtBeginDocument{\\setmainjfont[BoldFont=Hiragino Kaku Gothic Pro W6]{Hiragino Kaku Gothic Pro W3}}")
+  end
+\end{luacode*}
+
+\usepackage{epigraph}
+\usepackage{etoolbox}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage{libertine}
+\usepackage[final]{listings}
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+%\setbeameroption{show notes on second screen=right}
+
+%\usetikzlibrary{arrows,automata,shapes,backgrounds}
+
+\setmainfont[Numbers=OldStyle, BoldFont=Palatino Bold]{Palatino}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+
+\title[Extensible Exception]{%
+  \href{https://github.com/y-yu/extensible-exception-slide}{Extensible Exception} \\
+  \href{http://kbkz.connpass.com/event/32420/}{\normalsize kbkz.tech \#10}
+}
+\author{吉村 優}
+\date{July 16, 2016}
+\institute[\url{https://twitter.com/\_yyu\_}]{%
+  \url{https://twitter.com/\_yyu\_}\\
+  \url{http://qiita.com/yyu}\\
+  \url{https://github.com/y-yu}\\
+}
+
+\input{./lib/quotebox.tex}
+\input{./lib/listings_setting.tex}
+\input{./lib/footnotemark.tex}
+\input{./lib/mydescription.tex}
+\input{./lib/ballon.tex}
+
+\newcommand\ballref[1]{%
+\tikz \node[circle, shade,ball color=structure.fg,inner sep=0pt,%
+  text width=8pt,font=\tiny,align=center] {\color{white}\ref{#1}};
+}
+
+%\everymath{\displaystyle}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\section{自己紹介}
+\begin{frame}[fragile]
+  \frametitle{自己紹介}
+  
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \centering
+      \begin{figure}
+        \includegraphics[width=0.9\textwidth]{img/bird2x.png}
+      \end{figure}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item<2-> \href{https://www.coins.tsukuba.ac.jp/}{筑波大学 情報科学類} 学士（COINS11）
+        \item<3-> 現在はScalaを書く仕事に従事
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \centering
+  {\Huge Thank you for listening!}
+
+  \quad
+
+  {\Huge Any question?}
+\end{frame}
+
+\end{document}
