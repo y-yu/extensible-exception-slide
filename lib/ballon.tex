@@ -19,6 +19,6 @@
          author              = {}}
   \pgfqkeys{/calloutquote}{#1}                   
   \node [rectangle callout,callout relative pointer={\calloutquotepos},text width=\calloutquotewidth,/calloutquote/.cd,
-     #1] (tmpcall) at (0,0) {#2};
+     #1] (tmpcall) at (0,0) {\hfil#2\hfil};
   \node at (tmpcall.pointer){\calloutquoteauthor};    
 }

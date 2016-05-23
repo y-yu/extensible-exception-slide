@@ -34,6 +34,7 @@
 \usepackage[final]{listings}
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{qtree}
 
 %\setbeameroption{show notes on second screen=right}
 
@@ -90,6 +91,38 @@
       \end{itemize}
     \end{column}
   \end{columns}
+\end{frame}
+
+\section{エラー値とは？}
+\begin{frame}[fragile]
+  \frametitle{エラー値とは？}
+
+  \begin{itemize}
+    \item<2-> エラーであることを表す値
+    \item<3-> 継承を使って次のように作るのが一般的
+  \end{itemize}
+
+  \uncover<4-> {
+    \begin{tikzpicture}[sibling distance=10em,
+      every node/.style = {shape=rectangle, rounded corners,
+        draw, align=center,
+        top color=white, bottom color=blue!20}]]
+      \node {RootException}
+      child { node {DBException} }
+      child { node {FileException}
+        child { node {ReadException} }
+        child { node {WriteException} } }
+      child { node {HttpException} };
+    \end{tikzpicture}
+  }
+
+  \begin{center}
+    \uncover<5->{
+      \begin{tikzpicture}
+        \calloutquote[author={},width=7cm,position={(-1.2,-0.5)},fill=green!30,rounded corners]{\textbf{後から}この階層構造を変更できる？}
+      \end{tikzpicture}
+    }
+  \end{center}
 \end{frame}
 
 \begin{frame}
