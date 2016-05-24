@@ -22,7 +22,7 @@
     tex.sprint("\\AtBeginDocument{\\usepackage[ipaex, deluxe, expert]{luatexja-preset}}")
   else
     tex.sprint("\\AtBeginDocument{\\usepackage[hiragino-pro, deluxe, expert]{luatexja-preset}}")
-    tex.sprint("\\AtBeginDocument{\\setmainjfont[BoldFont=Hiragino Kaku Gothic Pro W6]{Hiragino Kaku Gothic Pro W3}}")
+    tex.sprint("\\AtBeginDocument{\\setmainjfont[BoldFont=HiraKakuPro-W6]{HiraKakuPro-W3}}")
   end
 \end{luacode*}
 
@@ -34,6 +34,7 @@
 \usepackage[final]{listings}
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{tikz-qtree}
 
 %\setbeameroption{show notes on second screen=right}
 
@@ -93,35 +94,144 @@
 \end{frame}
 
 \section{エラー値とは？}
+
+\subsection{エラー値の階層構造}
 \begin{frame}[fragile]
   \frametitle{エラー値とは？}
 
   \begin{itemize}
     \item<2-> エラーであることを表す値
-    \item<3-> 継承を使って次のように作るのが一般的
+    \item<3-> 木構造になるのが一般的
   \end{itemize}
 
-  \uncover<4-> {
-    \begin{tikzpicture}[sibling distance=10em,
-      every node/.style = {shape=rectangle, rounded corners,
-        draw, align=center,
-        top color=white, bottom color=blue!20}]]
-      \node {RootException}
-      child { node {DBException} }
-      child { node {FileException}
-        child { node {ReadException} }
-        child { node {WriteException} } }
-      child { node {HttpException} };
-    \end{tikzpicture}
-  }
-
   \begin{center}
-    \uncover<5->{
-      \begin{tikzpicture}
-        \calloutquote[author={},width=7cm,position={(-1.2,-0.5)},fill=green!30,rounded corners]{\textbf{後から}この階層構造を変更できる？}
+    \uncover<4-> {
+      \begin{tikzpicture}[scale=.8]
+        \Tree[.RootException
+                  HttpException 
+                  DbException 
+                  [.FileException 
+                      ReadException
+                      WriteException ] ]
       \end{tikzpicture}
     }
   \end{center}
+\end{frame}
+
+\subsection{継承を用いた表現}
+\begin{frame}[fragile]
+  \frametitle{継承を用いた表現}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=.8]
+      \Tree[.RootException
+                HttpException 
+                DbException 
+                [.FileException 
+                    ReadException
+                    WriteException ] ]
+    \end{tikzpicture}
+  \end{center}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala]{./src/exception.scala}
+  }
+\end{frame}
+
+\subsection{サブタイプ多相}
+\begin{frame}[fragile]
+  \frametitle{サブタイプ多相}
+
+  \begin{block}{}
+    \begin{shadequote}[r]{\scriptsize 筑波大学 プログラム言語論\cite{subtype}}
+      型$A$が型$B$のsubtype（部分型）のとき、型$B$の式を書くべきところに、型$A$の式を書いても良い。
+    \end{shadequote}
+  \end{block}
+
+  \begin{center}
+    \uncover<2->{
+      \begin{tikzpicture}[scale=.8]
+        \Tree[.RootException
+                  HttpException 
+                  DbException 
+                  [.FileException 
+                      ReadException
+                      WriteException ] ]
+      \end{tikzpicture}
+    }
+  \end{center}
+
+  \uncover<3->{
+    \begin{exampleblock}{}
+      \begin{itemize}
+        \item<3-> RootExceptionを書くべきところにHttpExceptionを書く
+        \item<4-> RootExceptionを書くべきところにReadExceptionを書く
+      \end{itemize}
+    \end{exampleblock}
+  }
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{階層構造の変更}
+
+  \begin{center}
+    \begin{tikzpicture}[scale=.8]
+      \Tree[.RootException
+                HttpException 
+                DbException 
+                [.FileException 
+                    ReadException
+                    WriteException ] ]
+    \end{tikzpicture}
+
+    \uncover<2->{
+      \begin{tikzpicture}
+        \calloutquote[author={},width=7cm,position={(-1.2,-0.3)},fill=green!30,rounded corners]{\textbf{後から}この階層構造を変更できる？}
+      \end{tikzpicture}
+    }
+
+    \uncover<3-> {
+      \begin{tikzpicture}[scale=.8]
+        \Tree[.RootException
+                  [.\textcolor{red}{DbAndHttpException}
+                      HttpException 
+                      DbException ] 
+                  [.FileException 
+                      ReadException
+                      WriteException ] ]
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{center}
+    \begin{tikzpicture}
+      \calloutquote[author={},width=5cm,position={(1.2,-0.3)},fill=red!30,rounded corners]{\huge\textbf{無理}では？}
+    \end{tikzpicture}
+
+    \uncover<2->{
+      \begin{tikzpicture}
+        \calloutquote[author={},width=11cm,position={(-1.2,-0.3)},fill=blue!30,rounded corners]{\huge\textbf{継承}でやるのはよくない？}
+      \end{tikzpicture}
+    }
+
+    \uncover<3->{
+      \begin{tikzpicture}
+        \calloutquote[author={\includegraphics[width=1cm]{./img/bird2x.png}},width=8cm,position={(1.2,-0.5)},fill=green!30,rounded corners]{\huge\textbf{型クラス}でやろう！}
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\section*{参考文献}
+\begin{frame}
+  \frametitle{参考文献}
+
+  \nocite{*}
+  \bibliographystyle{jplain_url}
+  \bibliography{ref}
 \end{frame}
 
 \begin{frame}

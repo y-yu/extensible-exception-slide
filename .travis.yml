@@ -9,7 +9,7 @@ install:
   - rm BasicTeX.pkg
   - export PATH=$PATH:/usr/texbin
   - sudo tlmgr update --self --all
-  - sudo tlmgr install latexmk collection-luatex collection-langjapanese collection-fontsrecommended filehook type1cm epigraph framed libertine cm-unicode
+  - sudo tlmgr install latexmk collection-luatex collection-langjapanese collection-fontsrecommended filehook type1cm epigraph framed libertine cm-unicode tikz-qtree
 before_script:
   - sudo mkdir -p /usr/local/texlive/2015basic/texmf-local/fonts/opentype/public/hiragino/
   - cd /usr/local/texlive/2015basic/texmf-local/fonts/opentype/public/hiragino/
