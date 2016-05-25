@@ -88,6 +88,7 @@
       \begin{itemize}
         \item<2-> \href{https://www.coins.tsukuba.ac.jp/}{筑波大学 情報科学類} 学士（COINS11）
         \item<3-> 現在はScalaを書く仕事に従事
+        \item<4-> エラー処理に関する話をします
       \end{itemize}
     \end{column}
   \end{columns}
@@ -99,20 +100,34 @@
 \begin{frame}[fragile]
   \frametitle{エラー値とは？}
 
-  \begin{itemize}
-    \item<2-> エラーであることを表す値
-    \item<3-> 木構造になるのが一般的
-  \end{itemize}
+  \uncover<2-> {
+    \begin{block}{エラー値}
+      \begin{itemize}
+        \item<3-> エラーであることを表す値
+        \item<4-> 階層構造（木構造）になるのが一般的
+      \end{itemize}
+    \end{block}
+  }
+
+  \uncover<5-> {
+    \begin{center}
+      \begin{exampleblock}{エラー値の階層構造の例}
+        \begin{tikzpicture}[scale=.8]
+          \Tree[.RootException
+                    HttpException 
+                    DbException 
+                    [.FileException 
+                        ReadException
+                        WriteException ] ]
+        \end{tikzpicture}
+      \end{exampleblock}
+    \end{center}
+  }
 
   \begin{center}
-    \uncover<4-> {
-      \begin{tikzpicture}[scale=.8]
-        \Tree[.RootException
-                  HttpException 
-                  DbException 
-                  [.FileException 
-                      ReadException
-                      WriteException ] ]
+    \uncover<6->{
+      \begin{tikzpicture}
+        \calloutquote[author={},width=8cm,position={(-1.2,-0.2)},fill=green!30,rounded corners]{どうやって\textbf{階層構造}を作る？}
       \end{tikzpicture}
     }
   \end{center}
@@ -136,6 +151,14 @@
   \uncover<2->{
     \lstinputlisting[style=scala]{./src/exception.scala}
   }
+
+  \begin{center}
+    \uncover<3->{
+      \begin{tikzpicture}
+        \calloutquote[author={},width=8cm,position={(1.2,-0.2)},fill=blue!30,rounded corners]{どうして継承を使うの？}
+      \end{tikzpicture}
+    }
+  \end{center}
 \end{frame}
 
 \subsection{サブタイプ多相}
@@ -162,10 +185,10 @@
   \end{center}
 
   \uncover<3->{
-    \begin{exampleblock}{}
+    \begin{exampleblock}{例}
       \begin{itemize}
-        \item<3-> RootExceptionを書くべきところにHttpExceptionを書く
-        \item<4-> RootExceptionを書くべきところにReadExceptionを書く
+        \item<4-> RootExceptionを書くべきところにHttpExceptionを書く
+        \item<5-> RootExceptionを書くべきところにReadExceptionを書く
       \end{itemize}
     \end{exampleblock}
   }
