@@ -1,4 +1,4 @@
-%%% Modification of BibTeX style file /usr/local/texlive/2015/texmf-dist/pbibtex/bst/jplain.bst
+%%% Modification of BibTeX style file /usr/local/texlive/2015basic/texmf-dist/pbibtex/bst/junsrt.bst
 %%% ... by urlbst, version 0.7 (marked with "% urlbst")
 %%% See <http://purl.org/nxg/dist/urlbst>
 %%% Added webpage entry type, and url and lastchecked fields.
@@ -25,22 +25,6 @@
 	% Please notify Shouichi MATSUI(matsui@denken.or.jp) of any bugs in
 	% these standard styles or in this documentation file.
 	% 松井 正一  (財) 電力中央研究所　情報システム部
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -786,7 +770,7 @@ FUNCTION {empty.misc.check}
   month empty$ year empty$ note empty$
   and and and and and
 
-  key empty$ not and
+
 
     { "all relevant fields are empty in " cite$ * warning$ }
     'skip$
@@ -1548,157 +1532,9 @@ FUNCTION {set.is.kanji.entry}
 }
 ITERATE {set.is.kanji.entry}
 
-FUNCTION {sortify}
-{ purify$
-  "l" change.case$
-}
-INTEGERS { len }
-FUNCTION {chop.word}
-{ 's :=
-  'len :=
-  s #1 len substring$ =
-    { s len #1 + global.max$ substring$ }
-    's
-  if$
-}
 
 
 
-FUNCTION {sort.format.names}
-{ 's :=
-  yomi empty$
-     'skip$
-     { yomi 's := }
-  if$
-  #1 'nameptr :=
-  ""
-  s num.names$ 'numnames :=
-  numnames 'namesleft :=
-    { namesleft #0 > }
-    { nameptr #1 >
-	{ ", " * }
-	'skip$
-      if$
-
-      s nameptr "{vv{ } }{ll{ }}{  ff{ }}{  jj{ }}" format.name$ 't :=
-
-      nameptr numnames = t "others" = and
- 	{ s is.kanji.str$
-
- 		{"ほか" * }
-
- 		{"et~al." *}
-	  if$
- 	}
-	{ t sortify * }
-      if$
-      nameptr #1 + 'nameptr :=
-      namesleft #1 - 'namesleft :=
-    }
-  while$
-}
-FUNCTION {sort.format.title}
-{ 't :=
-  "A " #2
-    "An " #3
-      "The " #4 t chop.word
-    chop.word
-  chop.word
-  sortify
-  #1 global.max$ substring$
-}
-FUNCTION {author.sort}
-{ author empty$
-    { key empty$
-	{ "to sort, need author or key in " cite$ * warning$
-	  ""
-	}
-	{ key sortify }
-      if$
-    }
-    { author sort.format.names }
-  if$
-}
-FUNCTION {author.editor.sort}
-{ author empty$
-    { editor empty$
-	{ key empty$
-	    { "to sort, need author, editor, or key in " cite$ * warning$
-	      ""
-	    }
-	    { key sortify }
-	  if$
-	}
-	{ editor sort.format.names }
-      if$
-    }
-    { author sort.format.names }
-  if$
-}
-FUNCTION {author.organization.sort}
-{ author empty$
-    { organization empty$
-	{ key empty$
-	    { "to sort, need author, organization, or key in " cite$ * warning$
-	      ""
-	    }
-	    { key sortify }
-	  if$
-	}
-	{ "The " #4 organization chop.word sortify }
-      if$
-    }
-    { author sort.format.names }
-  if$
-}
-FUNCTION {editor.organization.sort}
-{ editor empty$
-    { organization empty$
-	{ key empty$
-	    { "to sort, need editor, organization, or key in " cite$ * warning$
-	      ""
-	    }
-	    { key sortify }
-	  if$
-	}
-	{ "The " #4 organization chop.word sortify }
-      if$
-    }
-    { editor sort.format.names }
-  if$
-}
-FUNCTION {presort}
-
-{ type$ "book" =
-
-  type$ "inbook" =
-  or
-    'author.editor.sort
-    { type$ "proceedings" =
-	'editor.organization.sort
-	{ type$ "manual" =
-	    'author.organization.sort
-	    'author.sort
-	  if$
-	}
-      if$
-    }
-  if$
-
-  "    "
-  *
-  year field.or.null sortify
-  *
-  "    "
-  *
-  title field.or.null
-  sort.format.title
-  *
-  #1 entry.max$ substring$
-  'sort.key$ :=
-}
-ITERATE {presort}
-SORT
 
 
 STRINGS { longest.label }

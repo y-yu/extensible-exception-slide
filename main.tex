@@ -110,8 +110,8 @@
   }
 
   \uncover<5-> {
-    \begin{center}
-      \begin{exampleblock}{エラー値の階層構造の例}
+    \begin{exampleblock}{エラー値の階層構造の例}
+      \begin{center}
         \begin{tikzpicture}[scale=.8]
           \Tree[.RootException
                     HttpException 
@@ -120,8 +120,8 @@
                         ReadException
                         WriteException ] ]
         \end{tikzpicture}
-      \end{exampleblock}
-    \end{center}
+      \end{center}
+    \end{exampleblock}
   }
 
   \begin{center}
@@ -149,7 +149,7 @@
   \end{center}
 
   \uncover<2->{
-    \lstinputlisting[style=scala]{./src/exception.scala}
+    \lstinputlisting[style=scala]{./src/Exception.scala}
   }
 
   \begin{center}
@@ -248,12 +248,70 @@
   \end{center}
 \end{frame}
 
+\section{新しい型クラス}
+\begin{frame}[fragile]
+  \frametitle{新しい型クラス}
+
+  \uncover<2->{
+    \begin{block}{変換を表す型クラス\lstinline|:~>|}
+      型$A$から型$B$への変換ができることを表す型クラス
+      \uncover<3->{
+        \lstinputlisting[style=scala]{./src/Transform.scala}
+      }
+      \uncover<4-> {
+        \lstinline|:~>|のインスタンスとして、階層構造を定義
+      }
+    \end{block}
+  }
+
+  \uncover<5->{
+    \begin{exampleblock}{例}
+      \lstinputlisting[style=scala]{./src/Instance.scala}
+    \end{exampleblock}
+  }
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{階層構造の拡張}
+  
+  \begin{enumerate}
+    \item<2-> \textbf{新しい}エラー値を定義
+    \item<3-> 型クラス\lstinline|:~>|のインスタンスを定義
+    \item<4-> 型クラス\lstinline|:~>|のインスタンスを使うようにEitherを改造
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{新しいエラー値の定義}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala, firstline=1, lastline=1]{./src/DbAndHttpException.scala}
+  }
+  
+  \uncover<3->{
+    \begin{block}{継承に基づく階層構造}
+      \begin{center}
+        \begin{tikzpicture}[scale=.7]
+          \tikzset{level distance=2cm}
+          \Tree[.RootException
+                    \textcolor{red}{DbAndHttpException}
+                    HttpException
+                    DbException
+                    [.FileException 
+                        ReadException
+                        WriteException ] ]
+        \end{tikzpicture}
+      \end{center}
+    \end{block}
+  }
+\end{frame}
+
 \section*{参考文献}
 \begin{frame}
   \frametitle{参考文献}
 
   \nocite{*}
-  \bibliographystyle{jplain_url}
+  \bibliographystyle{junsrt_url}
   \bibliography{ref}
 \end{frame}
 
