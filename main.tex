@@ -127,7 +127,7 @@
   \begin{center}
     \uncover<6->{
       \begin{tikzpicture}
-        \calloutquote[author={},width=8cm,position={(-1.2,-0.2)},fill=green!30,rounded corners]{どうやって\textbf{階層構造}を作る？}
+        \calloutquote[width=8cm,position={(-1.2,-0.2)},fill=green!30,rounded corners]{どうやって\textbf{階層構造}を作る？}
       \end{tikzpicture}
     }
   \end{center}
@@ -155,12 +155,13 @@
   \begin{center}
     \uncover<3->{
       \begin{tikzpicture}
-        \calloutquote[author={},width=8cm,position={(1.2,-0.2)},fill=blue!30,rounded corners]{どうして継承を使うの？}
+        \calloutquote[width=6cm,position={(1.2,-0.2)},fill=blue!30,rounded corners]{どうして継承を使うの？}
       \end{tikzpicture}
     }
   \end{center}
 \end{frame}
 
+\section{サブタイプとEither}
 \subsection{サブタイプ多相}
 \begin{frame}[fragile]
   \frametitle{サブタイプ多相}
@@ -194,9 +195,60 @@
   }
 \end{frame}
 
+\subsection{エラー値を扱うEitherとサブタイプ多相}
+\begin{frame}[fragile]
+  \frametitle{エラー値を扱うEitherとサブタイプ多相}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Either.scala}
+  }
+
+  \begin{itemize}
+    \item<3-> \lstinline|flatMap|の型パラメータで$AA >: A$を取る
+    \item<4-> $AA >: A$は$AA$が$A$のスーパータイプであることを表す
+  \end{itemize}
+
+  \uncover<5->{
+    \begin{exampleblock}{}
+      \lstinputlisting[style=scala, firstline=11, lastline=15]{./src/Either.scala}
+    \end{exampleblock}
+  }
+\end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{階層構造の変更}
+  \frametitle{エラー値を扱うEitherとサブタイプ多相}
+
+  \begin{exampleblock}{}
+    \lstinputlisting[style=scala, firstline=17]{./src/Either.scala}
+  \end{exampleblock}
+
+  \begin{center}
+    \uncover<2->{
+      \begin{tikzpicture}
+        \calloutquote[width=9cm,position={(-1.2,-0.3)},fill=green!30,rounded corners]{これの型は\lstinline|Left[RootException]|になる}
+      \end{tikzpicture}
+
+      \begin{tikzpicture}[scale=.8]
+        \Tree[.\textcolor{red}{RootException}
+                  HttpException 
+                  DbException 
+                  [.FileException 
+                      ReadException
+                      WriteException ] ]
+      \end{tikzpicture}
+    }
+
+    \uncover<3->{
+      \begin{tikzpicture}
+        \calloutquote[width=10cm,position={(1.2,-0.3)},fill=blue!30,rounded corners]{型の上ではFileExceptionと\textbf{区別}できなくなった！}
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\section{階層構造の拡張}
+\begin{frame}[fragile]
+  \frametitle{階層構造の拡張}
 
   \begin{center}
     \begin{tikzpicture}[scale=.8]
@@ -210,14 +262,14 @@
 
     \uncover<2->{
       \begin{tikzpicture}
-        \calloutquote[author={},width=7cm,position={(-1.2,-0.3)},fill=green!30,rounded corners]{\textbf{後から}この階層構造を変更できる？}
+        \calloutquote[width=7cm,position={(-1.2,-0.3)},fill=green!30,rounded corners]{\textbf{後から}この階層構造を変更できる？}
       \end{tikzpicture}
     }
 
     \uncover<3-> {
       \begin{tikzpicture}[scale=.8]
         \Tree[.RootException
-                  [.\textcolor{red}{DbAndHttpException}
+                  [.\textcolor{red}{InternalServerErrorException}
                       HttpException 
                       DbException ] 
                   [.FileException 
@@ -229,14 +281,16 @@
 \end{frame}
 
 \begin{frame}[fragile]
+  \frametitle{階層構造の拡張}
+
   \begin{center}
     \begin{tikzpicture}
-      \calloutquote[author={},width=5cm,position={(1.2,-0.3)},fill=red!30,rounded corners]{\huge\textbf{無理}では？}
+      \calloutquote[width=5cm,position={(1.2,-0.3)},fill=red!30,rounded corners]{\huge\textbf{無理}では？}
     \end{tikzpicture}
 
     \uncover<2->{
       \begin{tikzpicture}
-        \calloutquote[author={},width=11cm,position={(-1.2,-0.3)},fill=blue!30,rounded corners]{\huge\textbf{継承}でやるのはよくない？}
+        \calloutquote[width=11cm,position={(-1.2,-0.3)},fill=blue!30,rounded corners]{\huge\textbf{継承}でやるのはよくない？}
       \end{tikzpicture}
     }
 
@@ -248,9 +302,21 @@
   \end{center}
 \end{frame}
 
-\section{新しい型クラス}
 \begin{frame}[fragile]
-  \frametitle{新しい型クラス}
+  \frametitle{階層構造の拡張}
+  
+  \begin{enumerate}
+    \item<2-> 新しい型クラスを導入
+    \item<3-> 新しいエラー値を定義
+    \item<4-> 型クラス\lstinline|:~>|のインスタンスを定義
+    \item<5-> 型クラス\lstinline|:~>|のインスタンスを使うようにEitherを拡張
+  \end{enumerate}
+\end{frame}
+
+\section{新しい型クラスとEitherの拡張}
+\subsection{新しい型クラスの定義}
+\begin{frame}[fragile]
+  \frametitle{新しい型クラス\lstinline|:~>|の定義}
 
   \uncover<2->{
     \begin{block}{変換を表す型クラス\lstinline|:~>|}
@@ -258,13 +324,10 @@
       \uncover<3->{
         \lstinputlisting[style=scala]{./src/Transform.scala}
       }
-      \uncover<4-> {
-        \lstinline|:~>|のインスタンスとして、階層構造を定義
-      }
     \end{block}
   }
 
-  \uncover<5->{
+  \uncover<4->{
     \begin{exampleblock}{例}
       \lstinputlisting[style=scala]{./src/Instance.scala}
     \end{exampleblock}
@@ -272,20 +335,10 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{階層構造の拡張}
-  
-  \begin{enumerate}
-    \item<2-> \textbf{新しい}エラー値を定義
-    \item<3-> 型クラス\lstinline|:~>|のインスタンスを定義
-    \item<4-> 型クラス\lstinline|:~>|のインスタンスを使うようにEitherを改造
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}[fragile]
   \frametitle{新しいエラー値の定義}
 
   \uncover<2->{
-    \lstinputlisting[style=scala, firstline=1, lastline=1]{./src/DbAndHttpException.scala}
+    \lstinputlisting[style=scala, firstline=1, lastline=2]{./src/InternalServerErrorException.scala}
   }
   
   \uncover<3->{
@@ -294,18 +347,81 @@
         \begin{tikzpicture}[scale=.7]
           \tikzset{level distance=2cm}
           \Tree[.RootException
-                    \textcolor{red}{DbAndHttpException}
+                    \textcolor{red}{InternalServerErrorException}
                     HttpException
                     DbException
-                    [.FileException 
-                        ReadException
-                        WriteException ] ]
+                    [.FileException \edge[roof]; {Read\&WriteException} ] ]
         \end{tikzpicture}
       \end{center}
     \end{block}
   }
 \end{frame}
 
+\subsection{インスタンスの定義}
+\begin{frame}[fragile]
+  \frametitle{型クラス\lstinline|:~>|のインスタンス定義}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala, firstline=4]{./src/InternalServerErrorException.scala}
+  }
+
+  \begin{itemize}
+    \item<3-> DbExceptionからDbAndHttpExceptionへの変換を定義
+    \item<4-> HttpExceptionからDbAndHttpExceptionへの変換を定義
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{型クラス\lstinline|:~>|のインスタンス定義}
+
+  \begin{block}{継承に基づく階層構造とインスタンス}
+    \begin{center}
+      \begin{tikzpicture}[scale=.7]
+        \tikzset{level distance=2cm}
+        \Tree[.RootException
+                  \node(InternalServerError){\textcolor{red}{InternalServerErrorException}};
+                  \node(Http){HttpException};
+                  \node(Db){DbException};
+                  [.FileException \edge[roof]; {Read\&WriteException} ] ]
+        \draw[->, color=blue] (Http)..controls +(south west:1.5) and +(south east:1.5)..(InternalServerError);
+        \draw[->, color=blue] (Db)..controls +(south west:3) and +(south east:3)..(InternalServerError);
+      \end{tikzpicture}
+    \end{center}
+  \end{block}
+\end{frame}
+
+\subsection{Eitherの拡張}
+\begin{frame}[fragile]
+  \frametitle{Eitherの拡張}
+
+  \begin{block}{既存のEither}
+    \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Either.scala}
+  \end{block}
+
+  \uncover<2->{
+    Pimp my LibraryパターンでEitherを拡張
+    \lstinputlisting[style=scala, firstline=1, lastline=3]{./src/ExceptionEither.scala}
+  }
+
+  \begin{itemize}
+    \item<3-> \lstinline|map|と\lstinline|flatMap|を拡張
+    \item<4-> \lstinline|as|を導入
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{\lstinline|map|と\lstinline|flatMap|の拡張}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala, firstline=5, lastline=17]{./src/ExceptionEither.scala}
+  }
+
+  \begin{itemize}
+    \item<3-> 型クラス\lstinline|:~>|のインスタンスを引数に追加
+    \item<4-> \lstinline|Left|の場合、型クラス\lstinline|:~>|のインスタンスを用いて変換
+  \end{itemize}
+\end{frame}
+                                         
 \section*{参考文献}
 \begin{frame}
   \frametitle{参考文献}
@@ -313,6 +429,10 @@
   \nocite{*}
   \bibliographystyle{junsrt_url}
   \bibliography{ref}
+\end{frame}
+
+\begin{frame}
+  \tableofcontents
 \end{frame}
 
 \begin{frame}
