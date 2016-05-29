@@ -1,0 +1,1 @@
+diverging implicit expansion for type :~>[HttpException,B]

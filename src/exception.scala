@@ -1,6 +1,6 @@
 trait RootException extends Throwable
 
-case class DatabaseException(m: String) extends RootException
+case class DbException(m: String) extends RootException
 
 case class HttpException(m: String) extends RootException
 

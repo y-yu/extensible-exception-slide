@@ -8,7 +8,7 @@ trait Either[+A, +B] {
 case class Left [+A, +B](a: A) extends Either[A, B]
 case class Right[+A, +B](b: B) extends Either[A, B]
 
-// Left(FileException)
+// Left[FileException]
 for {
   a <- Left(WriteException("file write error"))
   b <- Left(ReadException("file read error"))

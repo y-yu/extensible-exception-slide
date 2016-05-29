@@ -44,9 +44,9 @@
 \setsansfont{CMU Sans Serif}
 \setmonofont{CMU Typewriter Text}
 
-\title[Extensible Exception]{%
-  \href{https://github.com/y-yu/extensible-exception-slide}{Extensible Exception} \\
-  \href{http://kbkz.connpass.com/event/32420/}{\normalsize kbkz.tech \#10}
+\title[\href{https://github.com/y-yu/extensibleException}{Extensible Exception}]{%
+  \href{https://github.com/y-yu/extensibleException}{Extensible Exception} \\
+  {\normalsize \href{http://kbkz.connpass.com/event/32420/}{kbkz.tech \#10}} \\
 }
 \author{吉村 優}
 \date{July 16, 2016}
@@ -161,7 +161,7 @@
   \end{center}
 \end{frame}
 
-\section{サブタイプとEither}
+\section{サブタイピングとEither}
 \subsection{サブタイプ多相}
 \begin{frame}[fragile]
   \frametitle{サブタイプ多相}
@@ -195,9 +195,9 @@
   }
 \end{frame}
 
-\subsection{エラー値を扱うEitherとサブタイプ多相}
+\subsection{Either}
 \begin{frame}[fragile]
-  \frametitle{エラー値を扱うEitherとサブタイプ多相}
+  \frametitle{Either}
 
   \uncover<2->{
     \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Either.scala}
@@ -216,7 +216,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{エラー値を扱うEitherとサブタイプ多相}
+  \frametitle{Either}
 
   \begin{exampleblock}{}
     \lstinputlisting[style=scala, firstline=17]{./src/Either.scala}
@@ -306,10 +306,10 @@
   \frametitle{階層構造の拡張}
   
   \begin{enumerate}
-    \item<2-> 新しい型クラスを導入
-    \item<3-> 新しいエラー値を定義
-    \item<4-> 型クラス\lstinline|:~>|のインスタンスを定義
-    \item<5-> 型クラス\lstinline|:~>|のインスタンスを使うようにEitherを拡張
+    \item<1-> 新しい型クラス\lstinline|:~>|（Transform）を導入
+    \item<2-> 新しいエラー値を定義
+    \item<3-> 型クラス\lstinline|:~>|のインスタンスを定義
+    \item<4-> 型クラス\lstinline|:~>|のインスタンスを使うようにEitherを拡張
   \end{enumerate}
 \end{frame}
 
@@ -329,6 +329,7 @@
 
   \uncover<4->{
     \begin{exampleblock}{例}
+      DbExceptionからRootExceptionへの変換ができることを表す
       \lstinputlisting[style=scala]{./src/Instance.scala}
     \end{exampleblock}
   }
@@ -355,6 +356,10 @@
       \end{center}
     \end{block}
   }
+
+  \begin{itemize}
+    \item<4-> この時点で、HttpExceptionとDbExceptionはInternalServerErrorExceptionと関係がない
+  \end{itemize}
 \end{frame}
 
 \subsection{インスタンスの定義}
@@ -362,13 +367,16 @@
   \frametitle{型クラス\lstinline|:~>|のインスタンス定義}
 
   \uncover<2->{
-    \lstinputlisting[style=scala, firstline=4]{./src/InternalServerErrorException.scala}
+    \lstinputlisting[style=scala, firstline=4, lastline=16]{./src/InternalServerErrorException.scala}
   }
 
-  \begin{itemize}
-    \item<3-> DbExceptionからDbAndHttpExceptionへの変換を定義
-    \item<4-> HttpExceptionからDbAndHttpExceptionへの変換を定義
-  \end{itemize}
+  \uncover<3->{
+    次のインスタンスを定義する
+    \begin{itemize}
+      \item<4-> DbExceptionからInternalServerErrorExceptionへの変換
+      \item<5-> HttpExceptionからInternalServerErrorExceptionへの変換
+    \end{itemize}
+  }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -405,7 +413,7 @@
 
   \begin{itemize}
     \item<3-> \lstinline|map|と\lstinline|flatMap|を拡張
-    \item<4-> \lstinline|as|を導入
+    \item<4-> 新しいメソッド\lstinline|as|を導入
   \end{itemize}
 \end{frame}
 
@@ -417,11 +425,171 @@
   }
 
   \begin{itemize}
-    \item<3-> 型クラス\lstinline|:~>|のインスタンスを引数に追加
+    \item<3-> 型クラス\lstinline|:~>|のインスタンスをimplicitパラメータで検索
     \item<4-> \lstinline|Left|の場合、型クラス\lstinline|:~>|のインスタンスを用いて変換
+    \item<5-> \lstinline|Right|の場合は元のEitherと同様
   \end{itemize}
 \end{frame}
-                                         
+
+\begin{frame}[fragile]
+  \frametitle{新しいメソッド\lstinline|as|の導入}
+
+  \uncover<2->{
+    \lstinputlisting[style=scala, firstline=19]{./src/ExceptionEither.scala}
+  }
+
+  \begin{itemize}
+    \item<3-> 型クラス\lstinline|:~>|のインスタンスをimplicitパラメータで検索
+    \item<4-> 型クラス\lstinline|:~>|のインスタンスを用いて変換
+  \end{itemize}
+
+  \begin{center}
+    \uncover<5->{
+       \begin{tikzpicture}
+         \calloutquote[width=5cm,position={(1.2,-0.2)},fill=green!30,rounded corners]{これの何が便利なの？}
+       \end{tikzpicture}
+    }
+
+    \uncover<6->{
+       \begin{tikzpicture}
+         \calloutquote[width=4cm,position={(-1.2,-0.2)},fill=blue!30,rounded corners]{後で使います}
+       \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{例}
+
+  \begin{exampleblock}{}
+    \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Main.scala}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{既存の階層構造との互換性}
+
+  \uncover<2->{
+    \begin{exampleblock}{自らへのインスタンスがない}
+      \lstinputlisting[style=scala, firstline=11, lastline=16]{./src/Main.scala}
+    \end{exampleblock}
+  }
+
+  \uncover<3->{
+    \begin{exampleblock}{継承関係との互換性がない}
+      \lstinputlisting[style=scala, firstline=18, lastline=25]{./src/Main.scala}
+    \end{exampleblock}
+  }
+\end{frame}
+
+\section{自明なインスタンスの導入}
+\begin{frame}[fragile]
+  \frametitle{自明なインスタンスの導入}
+
+  \uncover<2->{
+    \begin{block}{self（自らへのインスタンス）}
+      \lstinputlisting[style=scala, firstline=1, lastline=3]{./src/Implicit.scala}
+    \end{block}
+  }
+
+  \uncover<3->{
+    \begin{block}{superclass（スーパータイプへのインスタンス）}
+      \lstinputlisting[style=scala, firstline=5, lastline=7]{./src/Implicit.scala}
+    \end{block}
+  }
+\end{frame}
+
+\section{Transitive}
+\begin{frame}[fragile]
+  \frametitle{Transitive}
+  
+  \uncover<2->{
+    \lstinline|A :~> B|と\lstinline|B :~> C|から\lstinline|A :~> C|というインスタンスを生成
+    \begin{center}
+      \begin{tikzpicture}
+        \tikzset{node distance=2cm}
+        \node (A)              {$A$};
+        \node (B) [right of=A] {$B$};
+        \node (C) [below of=B] {$C$};
+        \path[-stealth]
+              (A) edge node {} (B)
+              (B) edge node {} (C)
+              (A) edge[dashed,->] node {} (C); 
+      \end{tikzpicture}
+    \end{center}
+  }
+ 
+  \uncover<3->{
+    \begin{block}{}
+      \lstinputlisting[style=scala, firstline=9, lastline=12]{./src/Implicit.scala}
+    \end{block}
+  }
+ 
+  \begin{center}
+    \uncover<4->{
+       \begin{tikzpicture}
+         \calloutquote[width=4cm,position={(-1.2,-0.2)},fill=green!30,rounded corners]{これで動くの？}
+       \end{tikzpicture}
+    }
+  \end{center}
+
+  \uncover<5->{
+    \lstinputlisting[basicstyle=\listingfont\scriptsize]{./src/diverging.txt}
+  }
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{ワンステップの変換を表す型クラスの定義}
+
+  \uncover<2->{
+    \begin{block}{\lstinline|:->|}
+      \lstinputlisting[style=scala]{./src/Transform1.scala}
+    \end{block}
+  }
+
+  \begin{itemize}
+    \item<3-> 型クラス\lstinline|:->|（Transform1）は推移を含まないワンステップの変換を表す
+    \item<4-> 型クラス\lstinline|:->|のインターフェースは\lstinline|:~>|と全く同じ
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{\lstinline|:~>|のインスタンスを\lstinline|:->|に変更}
+
+  \uncover<2->{
+    \begin{block}{Before}
+      \lstinputlisting[style=scala, firstline=4, lastline=16]{./src/InternalServerErrorException.scala}
+    \end{block}
+  }
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{\lstinline|:~>|のインスタンスを\lstinline|:->|に変更}
+
+  \begin{block}{After}
+    \lstinputlisting[style=scala, firstline=18, lastline=30]{./src/InternalServerErrorException.scala}
+  \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Transitiveの定義}
+ 
+  \uncover<2->{
+    \begin{block}{Transitive}
+      \lstinputlisting[style=scala, firstline=14, lastline=17]{./src/Implicit.scala}
+    \end{block}
+  }
+
+  \begin{itemize}
+    \item<3-> ワンステップの変換\lstinline|:->|を使って発散を防止
+  \end{itemize}
+
+  %\uncover<4->{
+  %  \lstinputlisting[style=scala, fi]
+  %}
+\end{frame}
+
 \section*{参考文献}
 \begin{frame}
   \frametitle{参考文献}
@@ -432,14 +600,16 @@
 \end{frame}
 
 \begin{frame}
-  \tableofcontents
+  \frametitle{目次}
+
+  \tableofcontents[hideallsubsections]
 \end{frame}
 
 \begin{frame}
   \centering
   {\Huge Thank you for listening!}
 
-  \quad
+  \quad \quad
 
   {\Huge Any question?}
 \end{frame}
