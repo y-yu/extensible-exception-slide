@@ -73,7 +73,7 @@
 
 \frame{\maketitle}
 
-\section{自己紹介}
+\section*{自己紹介}
 \begin{frame}[fragile]
   \frametitle{自己紹介}
   
@@ -461,24 +461,34 @@
 \begin{frame}[fragile]
   \frametitle{例}
 
-  \begin{exampleblock}{}
-    \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Main.scala}
-  \end{exampleblock}
+  \uncover<2->{
+    \begin{exampleblock}{}
+      \lstinputlisting[style=scala, firstline=1, lastline=9]{./src/Main.scala}
+    \end{exampleblock}
+  }
+
+  \begin{center}
+    \uncover<3->{
+       \begin{tikzpicture}
+         \calloutquote[width=5cm,position={(1.2,-0.2)},fill=green!30,rounded corners]{抽象的な型へ変換できた！}
+       \end{tikzpicture}
+    }
+  \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{既存の階層構造との互換性}
 
   \uncover<2->{
-    \begin{exampleblock}{自らへのインスタンスがない}
+    \begin{alertblock}{自らへのインスタンスがない}
       \lstinputlisting[style=scala, firstline=11, lastline=16]{./src/Main.scala}
-    \end{exampleblock}
+    \end{alertblock}
   }
 
   \uncover<3->{
-    \begin{exampleblock}{継承関係との互換性がない}
+    \begin{alertblock}{継承関係との互換性がない}
       \lstinputlisting[style=scala, firstline=18, lastline=25]{./src/Main.scala}
-    \end{exampleblock}
+    \end{alertblock}
   }
 \end{frame}
 
@@ -497,6 +507,20 @@
       \lstinputlisting[style=scala, firstline=5, lastline=7]{./src/Implicit.scala}
     \end{block}
   }
+
+  \begin{center}
+    \uncover<4->{
+       \begin{tikzpicture}
+         \calloutquote[width=5cm,position={(-1.2,-0.2)},fill=blue!30,rounded corners]{これだけでOK？}
+       \end{tikzpicture}
+    }
+
+    \uncover<5->{
+       \begin{tikzpicture}
+         \calloutquote[width=5cm,position={(1.2,-0.2)},fill=red!30,rounded corners]{もうひとつ必要！}
+       \end{tikzpicture}
+    }
+  \end{center}
 \end{frame}
 
 \section{Transitive}
@@ -507,7 +531,7 @@
     \lstinline|A :~> B|と\lstinline|B :~> C|から\lstinline|A :~> C|というインスタンスを生成
     \begin{center}
       \begin{tikzpicture}
-        \tikzset{node distance=2cm}
+        \tikzset{node distance=1.5cm}
         \node (A)              {$A$};
         \node (B) [right of=A] {$B$};
         \node (C) [below of=B] {$C$};
@@ -520,21 +544,15 @@
   }
  
   \uncover<3->{
-    \begin{block}{}
+    \begin{block}{Transitive?}
       \lstinputlisting[style=scala, firstline=9, lastline=12]{./src/Implicit.scala}
     \end{block}
   }
- 
-  \begin{center}
-    \uncover<4->{
-       \begin{tikzpicture}
-         \calloutquote[width=4cm,position={(-1.2,-0.2)},fill=green!30,rounded corners]{これで動くの？}
-       \end{tikzpicture}
-    }
-  \end{center}
 
-  \uncover<5->{
-    \lstinputlisting[basicstyle=\listingfont\scriptsize]{./src/diverging.txt}
+  \uncover<4->{
+    \begin{alertblock}{Compile Time Error}
+      \lstinputlisting[basicstyle=\listingfont\scriptsize]{./src/diverging.txt}
+    \end{alertblock}
   }
 \end{frame}
 
@@ -584,10 +602,46 @@
   \begin{itemize}
     \item<3-> ワンステップの変換\lstinline|:->|を使って発散を防止
   \end{itemize}
+\end{frame}
 
-  %\uncover<4->{
-  %  \lstinputlisting[style=scala, fi]
-  %}
+\begin{frame}[fragile]
+  \frametitle{例}
+
+  \begin{center}
+    \uncover<2->{
+      \begin{tikzpicture}[scale=.7]
+        \tikzset{level distance=1.5cm}
+        \Tree[.RootException
+        \node(ControllerError){\textcolor{red}{ControllerError}};
+        \node(InternalServerError){InternalServerError};
+        \node(Http){Http};
+        \node(Db){Db};
+        [.File \node(Read){Read};
+               Write ] ]
+        \draw[->, color=blue] (InternalServerError)..controls +(south west:1.5) and +(south east:1.5)..(ControllerError);
+        \draw[->, color=blue] (Http)..controls +(south west:1) and +(south east:1)..(InternalServerError);
+        \draw[->, color=blue] (Db)..controls +(south west:2) and +(south east:2)..(InternalServerError);
+        \draw[->, color=blue] (Read)..controls +(south west:3) and +(south east:3)..(ControllerError);
+      \end{tikzpicture}
+    }
+  \end{center}
+
+  \uncover<3->{
+    \lstinputlisting[style=scala, firstline=27, lastline=36]{./src/Main.scala}
+  }
+\end{frame}
+
+\section{まとめ}
+\begin{frame}[fragile]
+  \frametitle{まとめ}
+
+  \begin{itemize}
+    \item<2-> 継承によるエラーの階層構造は後からの変更が困難になる
+    \item<3-> 変換を表す型クラスを利用することで、この問題を解決できる
+    \item<4-> ワンステップの変換を表す型クラスを別に用意することで、
+      推移を扱うことができる
+    \item<5-> HaskellやRustにもこの方法を導入できるかもしれない
+  \end{itemize}
 \end{frame}
 
 \section*{参考文献}

@@ -24,15 +24,13 @@ for {
   b <- e4
 } yield ()
 
-import DatabaseAndHttpException._
-import DatabaseAndHttpAndFileReadException._
-import DatabaseAndHttpAndFileException._
+import InternalServerErrorException._
+import ControllerErrorException._
 
-// Left[DatabaseAndHttpAndFileException]
+// Left[ControllerErrorException]
 for {
   a <- Left(DatabaseException("db error"))
   b <- Left(HttpException("http error"))
   c <- Left(ReadException("file read error"))
-  d <- Left(WriteException("file write error"))
-        .as[ControllerException]
+        .as[ControllerErrorException]
 } yield ()
