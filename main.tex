@@ -104,7 +104,7 @@
     \begin{block}{エラー値}
       \begin{itemize}
         \item<3-> エラーであることを表す値
-        \item<4-> 階層構造（木構造）になるのが一般的
+        \item<4-> しばしば階層構造（木構造）になる
       \end{itemize}
     \end{block}
   }
@@ -188,11 +188,12 @@
   \uncover<3->{
     \begin{exampleblock}{例}
       \begin{itemize}
-        \item<4-> RootExceptionを書くべきところにHttpExceptionを書く
-        \item<5-> RootExceptionを書くべきところにReadExceptionを書く
+        \item<4-> RootExceptionを書くべきところに、DbExceptionを書く
+        \item<5-> FileExceptionを書くべきところに、WriteExceptionを書く
       \end{itemize}
     \end{exampleblock}
   }
+
 \end{frame}
 
 \subsection{Either}
@@ -266,7 +267,7 @@
       \end{tikzpicture}
     }
 
-    \uncover<3-> {
+    \uncover<2-> {
       \begin{tikzpicture}[scale=.8]
         \Tree[.RootException
                   [.\textcolor{red}{InternalServerErrorException}
@@ -275,6 +276,12 @@
                   [.FileException 
                       ReadException
                       WriteException ] ]
+      \end{tikzpicture}
+    }
+
+    \uncover<3->{
+      \begin{tikzpicture}
+        \calloutquote[width=8cm,position={(1.2,-0.3)},fill=blue!30,rounded corners]{でも既存のコードは修正したくない……}
       \end{tikzpicture}
     }
   \end{center}
@@ -329,7 +336,7 @@
 
   \uncover<4->{
     \begin{exampleblock}{例}
-      DbExceptionからRootExceptionへの変換ができることを表す
+      \lstinline|Int|から\lstinline|String|への変換ができることを表すインスタンス
       \lstinputlisting[style=scala]{./src/Instance.scala}
     \end{exampleblock}
   }

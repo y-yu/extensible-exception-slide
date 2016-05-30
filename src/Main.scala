@@ -21,7 +21,7 @@ val e4 = Left(ReadException("file read error"))
 // compile time error!
 for {
   a <- e3
-  b <- e4
+  b <- e4.as[FileException]
 } yield ()
 
 import InternalServerErrorException._

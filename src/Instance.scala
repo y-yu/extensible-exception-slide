@@ -1,4 +1,3 @@
-implicit val db = new (DbException :~> RootException) {
-  def apply(a: DbException): RootException =
-    new RootException { ??? }
+implicit val intToString = new (Int :~> String) {
+  def apply(a: Int): String = a.toString
 }
